@@ -145,6 +145,10 @@ void imprimir_grafo(const Grafo *grafo)
     DISPATCHER_NO_ARG(imprimir_grafo, );
 }
 
+void imprimir_ordenacao_topologica(const Grafo *grafo) {
+    imprimir_ordenacao_topologica_m(grafo->matriz);
+}
+
 void adjacentes(const Grafo *grafo, int u, int *v, int max)
 {
     DISPATCHER(adjacentes, , u, v, max);

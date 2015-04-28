@@ -22,10 +22,20 @@ int main(int argc, char *argv[])
 
     scanf("%d %d\n", &n, &m);
 
-    grafo = criar_grafo(n, 1, MATRIZ_DE_ADJACENCIA);
+//    grafo = criar_grafo(n, 1, MATRIZ_DE_ADJACENCIA);
+    grafo = criar_grafo(7, 1, MATRIZ_DE_ADJACENCIA);
 
-    ler_arestas(grafo, m);
-    ler_commandos(grafo, argv[1][0] == 'B' ? busca_em_largura : busca_em_profundidade);
+//    ler_arestas(grafo, m);
+    ler_arestas(grafo, 15);
+    imprimir_grafo(grafo);
+    
+    imprimir_ordenacao_topologica(grafo);
+
+//    adjacentes(grafo, <#int u#>, <#int *v#>, <#int max#>)
+    
+//    busca_em_profundidade(grafo, <#int s#>, <#vertice_fn processa_vertice#>, <#aresta_fn processa_aresta#>, <#void *args#>)(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, &busca);
+    
+    //ler_commandos(grafo, argv[1][0] == 'B' ? busca_em_largura : busca_em_profundidade);
 
     destruir_grafo(grafo);
 
@@ -34,14 +44,24 @@ int main(int argc, char *argv[])
 
 void ler_arestas(Grafo *grafo, int m)
 {
-    int u, v;
-
+//    int u, v;
+    
+    int us[15] = {2, 5, 2, 0, 4, 0, 1, 4, 1, 5, 0, 1, 5, 3, 2};
+    int vs[15] = {5, 0, 0, 3, 6, 4, 5, 3, 2, 4, 6, 4, 3, 6, 3};
+    
     int i;
     for (i = 0; i < m; ++i)
     {
-        scanf("%d %d\n", &u, &v);
-        adicionar_aresta(grafo, u, v, 1);
+//        scanf("%d %d\n", &u, &v);
+        adicionar_aresta(grafo, us[i], vs[i], 1);
     }
+
+//    int i;
+//    for (i = 0; i < m; ++i)
+//    {
+//        scanf("%d %d\n", &u, &v);
+//        adicionar_aresta(grafo, u, v, 1);
+//    }
 }
 
 /**
@@ -95,6 +115,7 @@ static void preenche(int *vetor, int valor, int tamanho)
 
 void ler_commandos(Grafo *grafo, void (*busca_fn)(const Grafo*, int, vertice_fn, aresta_fn, void *))
 {
+    
     struct busca busca;
     busca.predecessor = (int *) malloc(n_vertices(grafo) * sizeof(int));
     busca.grafo_tamanho = n_vertices(grafo);
