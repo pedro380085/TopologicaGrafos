@@ -157,6 +157,9 @@ void adjacentes_m(const GrafoM *grafo, int u, int *v, int max);
 void busca_em_profundidade_m(const GrafoM *grafo, int s,
         vertice_fn_m processa_vertice, aresta_fn_m processa_aresta, void *args);
 
+void ordenacao_topologica_m(const GrafoM *grafo, int s,
+                            vertice_fn_m processa_vertice, aresta_fn_m processa_aresta, void *args);
+
 /**
  * @brief Realiza busca em profundidade a partir do vértice @param u. As callbacks
  * processa_vertice e processa_aresta devem retornar 1 se desejar que a busca continue ou

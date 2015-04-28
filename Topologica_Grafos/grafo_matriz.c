@@ -313,11 +313,16 @@ void ordenacao_topologica_m(const GrafoM *grafo, int s,
     
     d[s] = 0;
     visitar_profundidade(grafo, s, processa_vertice, processa_aresta, args, cor, d, p, f);
-    args = f;
     
-    printf("f:");
-    for (i = 0; i < grafo->n; i++) {
-        printf("%d ", f[i]);
+//    printf("f:");
+    for (i = grafo->n - 1; i >= 0; i--) {
+        if (f[i] != -1) {
+            if (i == 0) {
+                printf("%d", f[i]);
+            } else {
+                printf("%d ", f[i]);
+            }
+        }
     }
     printf("\n");
     

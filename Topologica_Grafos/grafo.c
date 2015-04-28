@@ -178,8 +178,9 @@ void busca_em_profundidade(const Grafo *grafo, int s,
     }
 }
 
-void ordenacao_topologica(const Grafo *grafo) {
-    ordenacao_topologica_m(grafo->matriz);
+void ordenacao_topologica(const Grafo *grafo, int s,
+                          vertice_fn processa_vertice, aresta_fn processa_aresta, void *args) {
+    ordenacao_topologica_m(grafo->matriz, s, (vertice_fn_m) processa_vertice, (aresta_fn_m) processa_aresta, args);
 }
 
 void busca_em_largura(const Grafo *grafo, int s,

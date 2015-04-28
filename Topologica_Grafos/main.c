@@ -17,21 +17,19 @@ int main(int argc, char *argv[])
     Grafo *grafo;
     int n, m;
 
-    if (argc < 2)
+    if (argc < 2) {
         return 1;
+    }
 
-//    scanf("%d %d\n", &n, &m);
+    scanf("%d %d\n", &n, &m);
 
-//    grafo = criar_grafo(n, 1, MATRIZ_DE_ADJACENCIA);
-    grafo = criar_grafo(7, 1, MATRIZ_DE_ADJACENCIA);
+    grafo = criar_grafo(n, 1, MATRIZ_DE_ADJACENCIA);
+//    grafo = criar_grafo(7, 1, MATRIZ_DE_ADJACENCIA);
 
-//    ler_arestas(grafo, m);
-    ler_arestas(grafo, 15);
-    imprimir_grafo(grafo);
+    ler_arestas(grafo, m);
+//    ler_arestas(grafo, 15);
     
-//    imprimir_ordenacao_topologica(grafo);
-    
-    ler_commandos(grafo, busca_em_profundidade);
+    ler_commandos(grafo, ordenacao_topologica);
 
     destruir_grafo(grafo);
 
@@ -40,24 +38,18 @@ int main(int argc, char *argv[])
 
 void ler_arestas(Grafo *grafo, int m)
 {
-//    int u, v;
+    int u, v;
     
-    int us[15] = {2, 5, 2, 0, 4, 0, 1, 4, 1, 5, 0, 1, 5, 3, 2};
-    int vs[15] = {5, 0, 0, 3, 6, 4, 5, 3, 2, 4, 6, 4, 3, 6, 3};
+//    int us[15] = {2, 5, 2, 0, 4, 0, 1, 4, 1, 5, 0, 1, 5, 3, 2};
+//    int vs[15] = {5, 0, 0, 3, 6, 4, 5, 3, 2, 4, 6, 4, 3, 6, 3};
     
     int i;
     for (i = 0; i < m; ++i)
     {
-//        scanf("%d %d\n", &u, &v);
-        adicionar_aresta(grafo, us[i], vs[i], 1);
+        scanf("%d %d\n", &u, &v);
+        adicionar_aresta(grafo, u, v, 1);
+//        adicionar_aresta(grafo, us[i], vs[i], 1);
     }
-
-//    int i;
-//    for (i = 0; i < m; ++i)
-//    {
-//        scanf("%d %d\n", &u, &v);
-//        adicionar_aresta(grafo, u, v, 1);
-//    }
 }
 
 /**
@@ -80,29 +72,20 @@ struct busca
  * busca.
  */
 static int copia_predecessor(int vertice,
-        const int *cor, const int *d, const int *predecessor, struct busca *busca)
+                             const int *cor, const int *d, const int *predecessor, struct busca *busca)
 {
     /* Argumentos não utilizados. */
     (void) cor;
     (void) d;
-
+    
     /* Se está processando o vértice destino, copie o vetor predecessor. */
     if (vertice == busca->destino)
     {
         memcpy(busca->predecessor, predecessor, busca->grafo_tamanho * sizeof(int));
-        return PARAR; /* A busca pode ser interrompida aqui. */
+        return CONTINUAR; /* A busca pode ser interrompida aqui. */
     }
-
+    
     return CONTINUAR; /* Continue a busca. */
-}
-
-static void imprimir_caminho(const int *predecessor, int destino)
-{
-    if (destino == -2) /* Chegou na raiz. */
-        return;
-
-    imprimir_caminho(predecessor, predecessor[destino]);
-    printf("%d ", destino);
 }
 
 static void preenche(int *vetor, int valor, int tamanho)
@@ -114,18 +97,19 @@ static void preenche(int *vetor, int valor, int tamanho)
 
 void ler_commandos(Grafo *grafo, void (*busca_fn)(const Grafo*, int, vertice_fn, aresta_fn, void *))
 {
-    int *f;
     struct busca busca;
     busca.predecessor = (int *) malloc(n_vertices(grafo) * sizeof(int));
     busca.grafo_tamanho = n_vertices(grafo);
 
-    while (scanf("%d %d", &busca.origem, &busca.destino) != EOF) {
-        preenche(busca.predecessor, -1, n_vertices(grafo));
-        busca_fn(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, f);
-        busca.predecessor[busca.origem] = -2; /* -2 indica a raiz. */
+    busca.origem = cabeca_ordenacao_topologica(grafo);
+    busca.destino = cauda_ordenacao_topologica(grafo);
     
-        ordenacao_topologica_m
-    }
+//    imprimir_grafo(grafo);
+//    printf("%d", busca.origem);
+//    printf("%d", busca.destino);
+
+    preenche(busca.predecessor, -1, n_vertices(grafo));
+    busca_fn(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, &busca);
 
     free(busca.predecessor);
 }
