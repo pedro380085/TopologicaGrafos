@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     if (argc < 2)
         return 1;
 
-    scanf("%d %d\n", &n, &m);
+//    scanf("%d %d\n", &n, &m);
 
 //    grafo = criar_grafo(n, 1, MATRIZ_DE_ADJACENCIA);
     grafo = criar_grafo(7, 1, MATRIZ_DE_ADJACENCIA);
@@ -29,13 +29,9 @@ int main(int argc, char *argv[])
     ler_arestas(grafo, 15);
     imprimir_grafo(grafo);
     
-    imprimir_ordenacao_topologica(grafo);
-
-//    adjacentes(grafo, <#int u#>, <#int *v#>, <#int max#>)
+//    imprimir_ordenacao_topologica(grafo);
     
-//    busca_em_profundidade(grafo, <#int s#>, <#vertice_fn processa_vertice#>, <#aresta_fn processa_aresta#>, <#void *args#>)(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, &busca);
-    
-    //ler_commandos(grafo, argv[1][0] == 'B' ? busca_em_largura : busca_em_profundidade);
+    ler_commandos(grafo, busca_em_profundidade);
 
     destruir_grafo(grafo);
 
@@ -76,6 +72,9 @@ struct busca
     int *predecessor;
 };
 
+#define PARAR 0
+#define CONTINUAR 1
+
 /**
  * Callback passada para o algoritmo de busca que preenche apropriadamente o resultado da
  * busca.
@@ -91,10 +90,10 @@ static int copia_predecessor(int vertice,
     if (vertice == busca->destino)
     {
         memcpy(busca->predecessor, predecessor, busca->grafo_tamanho * sizeof(int));
-        return 0; /* A busca pode ser interrompida aqui. */
+        return PARAR; /* A busca pode ser interrompida aqui. */
     }
 
-    return 1; /* Continue a busca. */
+    return CONTINUAR; /* Continue a busca. */
 }
 
 static void imprimir_caminho(const int *predecessor, int destino)
@@ -115,20 +114,17 @@ static void preenche(int *vetor, int valor, int tamanho)
 
 void ler_commandos(Grafo *grafo, void (*busca_fn)(const Grafo*, int, vertice_fn, aresta_fn, void *))
 {
-    
+    int *f;
     struct busca busca;
     busca.predecessor = (int *) malloc(n_vertices(grafo) * sizeof(int));
     busca.grafo_tamanho = n_vertices(grafo);
 
-    while (scanf("%d %d", &busca.origem, &busca.destino) != EOF)
-    {
+    while (scanf("%d %d", &busca.origem, &busca.destino) != EOF) {
         preenche(busca.predecessor, -1, n_vertices(grafo));
-        busca_fn(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, &busca);
+        busca_fn(grafo, busca.origem, (vertice_fn) copia_predecessor, NULL, f);
         busca.predecessor[busca.origem] = -2; /* -2 indica a raiz. */
-
-        if (busca.predecessor[busca.destino] != -1) /* Se tiver caminho. */
-            imprimir_caminho(busca.predecessor, busca.destino);
-        printf("\n");
+    
+        ordenacao_topologica_m
     }
 
     free(busca.predecessor);

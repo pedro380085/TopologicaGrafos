@@ -153,19 +153,52 @@ void imprimir_grafo_m(const GrafoM *grafo)
     }
 }
 
-void imprimir_ordenacao_topologica_m(const GrafoM *grafo) {
+int cabeca_ordenacao_topologica_m(const GrafoM *grafo) {
     
     // Primeiro precisamos achar a cabeça do grafo
-    int i, j, f = 0;
+    int i, j, f, inicial = -1;
+    
     for (i = 0; i < grafo->n; ++i) {
+        f = 0;
         for (j = 0; j < grafo->n; ++j) {
             if (grafo->adj[j][i]) {
-                printf("%d ", grafo->peso[i][j]);
-            } else {
-                
+                f = 1;
+                break;
             }
         }
+        
+        // Encontramos nossa cabeça
+        if (f == 0) {
+            inicial = i;
+            break;
+        }
     }
+    
+    return inicial;
+}
+
+int cauda_ordenacao_topologica_m(const GrafoM *grafo) {
+    
+    // Primeiro precisamos achar a cabeça do grafo
+    int i, j, f, final = -1;
+    
+    for (i = 0; i < grafo->n; ++i) {
+        f = 0;
+        for (j = 0; j < grafo->n; ++j) {
+            if (grafo->adj[i][j]) {
+                f = 1;
+                break;
+            }
+        }
+        
+        // Encontramos nossa cabeça
+        if (f == 0) {
+            final = i;
+            break;
+        }
+    }
+    
+    return final;
 }
 
 void adjacentes_m(const GrafoM *grafo, int u, int *v, int max)
@@ -192,33 +225,41 @@ void adjacentes_m(const GrafoM *grafo, int u, int *v, int max)
 
 static int visitar_profundidade(const GrafoM *grafo, int u,
         vertice_fn_m processa_vertice, aresta_fn_m processa_aresta, void *args,
-        int *cor, int *d, int *p)
+        int *cor, int *d, int *p, int *f)
 {
     cor[u] = CINZA;
 
-    if (processa_vertice && processa_vertice(u, cor, d, p, args) == PARAR)
+    if (processa_vertice && processa_vertice(u, cor, d, p, args) == PARAR) {
         return PARAR;
+    }
 
     int v;
     for (v = 0; v < grafo->n; ++v)
     {
-        if (grafo->adj[u][v] == 0)
+        
+        if (grafo->adj[u][v] == 0) {
             continue;
+        }
 
-        if (processa_aresta && processa_aresta(u, v, cor, d, p, args) == PARAR)
+        if (processa_aresta && processa_aresta(u, v, cor, d, p, args) == PARAR) {
             return PARAR;
+        }
 
-        if (cor[v] == BRANCO)
-        {
+        if (cor[v] == BRANCO) {
             p[v] = u;
             d[v] = d[u] + 1;
-            if (visitar_profundidade(grafo, v, processa_vertice, processa_aresta, args,
-                        cor, d, p) == PARAR)
-                return PARAR;
+            visitar_profundidade(grafo, v, processa_vertice, processa_aresta, args, cor, d, p, f);
         }
     }
 
     cor[u] = PRETO;
+    int i;
+    for (i = 0; i < grafo->n; i++) {
+        if (f[i] == -1) {
+            f[i] = u;
+            break;
+        }
+    }
 
     return CONTINUAR;
 }
@@ -232,6 +273,7 @@ void busca_em_profundidade_m(const GrafoM *grafo, int s,
     int *cor = (int *) malloc(grafo->n * sizeof(int));
     int *d = (int *) malloc(grafo->n * sizeof(int));
     int *p = (int *) malloc(grafo->n * sizeof(int));
+    int *f = (int *) malloc(grafo->n * sizeof(int));
 
     int i;
     for (i = 0; i < grafo->n; ++i)
@@ -239,11 +281,47 @@ void busca_em_profundidade_m(const GrafoM *grafo, int s,
         cor[i] = BRANCO;
         p[i] = NIL;
         d[i] = INF;
+        f[i] = NIL;
     }
 
     d[s] = 0;
-    visitar_profundidade(grafo, s, processa_vertice, processa_aresta, args, cor, d, p);
+    visitar_profundidade(grafo, s, processa_vertice, processa_aresta, args, cor, d, p, f);
+    
+    free(cor);
+    free(d);
+    free(p);
+}
 
+void ordenacao_topologica_m(const GrafoM *grafo, int s,
+                            vertice_fn_m processa_vertice, aresta_fn_m processa_aresta, void *args) {
+    if (grafo == NULL || s < 0 || s >= grafo->n)
+        return;
+    
+    int *cor = (int *) malloc(grafo->n * sizeof(int));
+    int *d = (int *) malloc(grafo->n * sizeof(int));
+    int *p = (int *) malloc(grafo->n * sizeof(int));
+    int *f = (int *) malloc(grafo->n * sizeof(int));
+    
+    int i;
+    for (i = 0; i < grafo->n; ++i)
+    {
+        cor[i] = BRANCO;
+        p[i] = NIL;
+        d[i] = INF;
+        f[i] = NIL;
+    }
+    
+    d[s] = 0;
+    visitar_profundidade(grafo, s, processa_vertice, processa_aresta, args, cor, d, p, f);
+    args = f;
+    
+    printf("f:");
+    for (i = 0; i < grafo->n; i++) {
+        printf("%d ", f[i]);
+    }
+    printf("\n");
+    
+    free(f);
     free(cor);
     free(d);
     free(p);

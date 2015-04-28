@@ -136,7 +136,13 @@ int peso_aresta(const Grafo *grafo, int u, int v);
  */
 void imprimir_grafo(const Grafo *grafo);
 
-void imprimir_ordenacao_topologica(const Grafo *grafo);
+/**
+ * @brief Obtém posições para ordem topológica.
+ *
+ * @param grafo Grafo a ser analisado.
+ */
+int cabeca_ordenacao_topologica(const Grafo *grafo);
+int cauda_ordenacao_topologica(const Grafo *grafo);
 
 /**
  * @brief Indica os vértices adjacentes ao vértice @param u. O resultado será salvo no

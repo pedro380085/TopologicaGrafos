@@ -145,8 +145,12 @@ void imprimir_grafo(const Grafo *grafo)
     DISPATCHER_NO_ARG(imprimir_grafo, );
 }
 
-void imprimir_ordenacao_topologica(const Grafo *grafo) {
-    imprimir_ordenacao_topologica_m(grafo->matriz);
+int cabeca_ordenacao_topologica(const Grafo *grafo) {
+    return cabeca_ordenacao_topologica_m(grafo->matriz);
+}
+
+int cauda_ordenacao_topologica(const Grafo *grafo) {
+    return cauda_ordenacao_topologica_m(grafo->matriz);
 }
 
 void adjacentes(const Grafo *grafo, int u, int *v, int max)
@@ -172,6 +176,10 @@ void busca_em_profundidade(const Grafo *grafo, int s,
                 (aresta_fn_l) processa_aresta, args);
         break;
     }
+}
+
+void ordenacao_topologica(const Grafo *grafo) {
+    ordenacao_topologica_m(grafo->matriz);
 }
 
 void busca_em_largura(const Grafo *grafo, int s,
